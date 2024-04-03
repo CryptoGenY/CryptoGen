@@ -4,4 +4,4 @@
   
 
 * AgentKIF
-  help https://github.com/CryptoGenY/CryptoGen/tree/main/AgentKIF.Help.md
+  help https://github.com/CryptoGenY/CryptoGen/tree/main/AgentKIF.help.md
