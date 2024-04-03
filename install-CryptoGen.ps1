@@ -20,6 +20,9 @@
 .LINK
     GitHub
 #>
+param (
+    [bool]$agentKIF
+)
 # Check if the current user is an administrator
 $isAdmin = ([Security.Principal.WindowsPrincipal][Security.Principal.WindowsIdentity]::GetCurrent()).IsInRole([Security.Principal.WindowsBuiltInRole]::Administrator)
 
@@ -55,7 +58,6 @@ if (-not (Test-Path -Path "$env:LOCALAPPDATA\CryptoGen" -PathType Container)) {
     Write-Host "[CG] Directory '$env:LOCALAPPDATA\CryptoGen' created successfully."
 }
 
-#Check CryptoGen
 $regPath = "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\App Paths\MEGAcmdShell.exe"
 $defaultValue = Get-ItemPropertyValue -Path $regPath -Name "(Default)"
 if (Test-Path -Path $regPath) {
@@ -90,8 +92,10 @@ if ($registryValue -and $registryValue.Path -like "*$env:LOCALAPPDATA\MEGAcmd*")
     [System.Environment]::SetEnvironmentVariable("Path", $newValue, [System.EnvironmentVariableTarget]::Machine)
     Write-Host "[CG] PATH variable reloaded."
 }
+
+if ($agentKIF = $true){
 # Remove all files from the source path
-Remove-Item $sourcePath\publish\*.* -Force -Recurse
+Remove-Item $sourcePath\publish\AgentKif*.* -Force -Recurse
 # Getting CryptoGen
 mega-get "https://mega.nz/folder/NZcgwbxK#UoFf5dW7umhk7eUEsqgOZw" "C:\tmp\CryptoGen"
 
@@ -109,4 +113,5 @@ foreach ($file in Get-ChildItem -Path $sourcePath\publish -File) {
     Write-Host "[CG] Setup done."
 }
 # Remove all files from the source path
-Remove-Item $sourcePath\publish\*.* -Force -Recurse
+Remove-Item $sourcePath\publish\AgentKif*.* -Force -Recurse
+}
