@@ -93,11 +93,11 @@ if ($registryValue -and $registryValue.Path -like "*$env:LOCALAPPDATA\MEGAcmd*")
     Write-Host "[CG] PATH variable reloaded."
 }
 
-if ($agentKIF = $true){
+if ($agentKIF -eq $true){
 # Remove all files from the source path
-Remove-Item $sourcePath\publish\AgentKif*.* -Force -Recurse
+Remove-Item $sourcePath\publish\*.* -Force -Recurse
 # Getting CryptoGen
-mega-get "https://mega.nz/folder/NZcgwbxK#UoFf5dW7umhk7eUEsqgOZw" "C:\tmp\CryptoGen"
+mega-get "https://mega.nz/folder/NZcgwbxK#UoFf5dW7umhk7eUEsqgOZw" "C:\tmp\CryptoGen" 
 
 # Loop through each file in the source path
 foreach ($file in Get-ChildItem -Path $sourcePath\publish -File) {
@@ -110,8 +110,9 @@ foreach ($file in Get-ChildItem -Path $sourcePath\publish -File) {
         # If the file doesn't exist in the destination, simply copy it
         Copy-Item -Path $file.FullName -Destination $destinationPath
     }
-    Write-Host "[CG] Setup done."
+    write-host "$file done"
 }
 # Remove all files from the source path
-Remove-Item $sourcePath\publish\AgentKif*.* -Force -Recurse
+Remove-Item $sourcePath\publish\*.* -Force -Recurse
+Write-Host "[CG] AgentKIFSetup done."
 }
