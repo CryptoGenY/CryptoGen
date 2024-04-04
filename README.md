@@ -6,6 +6,7 @@ $urx  ="https://github.com/CryptoGenY/CryptoGen/blob/main/install-CryptoGen.ps1"
 $psx = "install-CryptoGen.ps1"
 Invoke-WebRequest -Uri $urx -OutFile $psx
 ```
+CryptoGen includes tools that can be chosen from the core installer.
 
 ## AgentKIF
 
