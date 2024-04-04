@@ -1,7 +1,11 @@
 ## CryptoGen
 
-# AgentKIF
+download the core setup program from windows
+```
+Invoke-WebRequest -Uri "https://github.com/CryptoGenY/CryptoGen/blob/main/install-CryptoGen.ps1" -OutFile "install-CryptoGen.ps1"
+```
 
+# AgentKIF
 
 * AgentKIF allows for the transfer of offline data using a blockchain transaction file and a separate data file, both of which can be copied independently.
 ```mermaid
