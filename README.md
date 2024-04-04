@@ -3,7 +3,7 @@
 download the core setup program from powershell
 ```
 $urx  ="https://github.com/CryptoGenY/CryptoGen/blob/main/install-CryptoGen.ps1"
-psx = "install-CryptoGen.ps1"
+$psx = "install-CryptoGen.ps1"
 Invoke-WebRequest -Uri $urx -OutFile $psx
 ```
 
