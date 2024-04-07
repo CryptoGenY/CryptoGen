@@ -1,7 +1,14 @@
-## CryptoGen
+# CryptoGen
 
-# AgentKIF
+download the core setup program from powershell
+```
+$urx  ="https://github.com/CryptoGenY/CryptoGen/blob/main/install-CryptoGen.ps1"
+$psx = "install-CryptoGen.ps1"
+Invoke-WebRequest -Uri $urx -OutFile $psx
+```
+CryptoGen includes tools that can be chosen from the core installer.
 
+## AgentKIF
 
 * AgentKIF allows for the transfer of offline data using a blockchain transaction file and a separate data file, both of which can be copied independently.
 ```mermaid

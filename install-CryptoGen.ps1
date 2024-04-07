@@ -126,3 +126,4 @@ if ($agentKIF -eq $true) {
     Remove-Item $sourcePath\publish\*.* -Force -Recurse
     Write-Host "[CG] AgentKIFSetup done."
 }
+
