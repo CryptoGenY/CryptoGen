@@ -4,7 +4,7 @@
 .DESCRIPTION
     Clean Folders Source + Destination
 .PARAMETER ParameterName
-    na
+    agentKIF
 .EXAMPLE
     .\install-CryptoGen.ps1
 .INPUTS
@@ -18,7 +18,7 @@
     Version: 1.0
     PowerShell Version: 2.0
 .LINK
-    GitHub
+   https://github.com/CryptoGenY/CryptoGen
 #>
 param (
     [bool]$agentKIF
@@ -29,8 +29,10 @@ $isAdmin = ([Security.Principal.WindowsPrincipal][Security.Principal.WindowsIden
 # Output the result
 if ($isAdmin) {
     Write-Host "[CG] Current user is an administrator."
-} else {
-    Write-Host "[CG] Current user is not an administrator."
+}
+else {
+    Write-Host "[CG] Current user is not an administrator." -foregroundcolor red 
+    exit
 }
 
 # Check the current execution policy
@@ -43,7 +45,8 @@ Write-Host "[CG] Current execution policy: $executionPolicy"
 if ($executionPolicy -ne "RemoteSigned") {
     Set-ExecutionPolicy RemoteSigned -Scope CurrentUser -Force
     Write-Host "[CG] Execution policy set to RemoteSigned."
-} else {
+}
+else {
     Write-Host "[CG] Execution policy is already minimum RemoteSigned."
 }
 # Create temp Source Destination
@@ -62,27 +65,30 @@ $regPath = "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\App Paths\MEGAcmdShe
 $defaultValue = Get-ItemPropertyValue -Path $regPath -Name "(Default)"
 if (Test-Path -Path $regPath) {
     Write-Host "[CG] MEGAcmd exists"
-} else {
-cd $sourcePath
-$downloadUrl = "https://mega.nz/MEGAcmdSetup64.exe"
-Invoke-WebRequest -Uri $downloadUrl -OutFile "c:\tmp\MEGAcmdSetup64.exe"
-Start-Process -FilePath "MEGAcmdSetup64.exe" -ArgumentList "/S" -Wait
+}
+else {
+    set-location $sourcePath
+    $downloadUrl = "https://mega.nz/MEGAcmdSetup64.exe"
+    Invoke-WebRequest -Uri $downloadUrl -OutFile "c:\tmp\MEGAcmdSetup64.exe"
+    Start-Process -FilePath "MEGAcmdSetup64.exe" -ArgumentList "/S" -Wait
 }
 
-# Specify the registry path
+# Specify the registry path (megacmd)
 $registryPath = "HKLM:\SYSTEM\CurrentControlSet\Control\Session Manager\Environment"
 $registryValue = Get-ItemProperty -Path $registryPath -Name "Path"
 
 # Check if the registry value contains the desired path
-if ($registryValue -and $registryValue.Path -like "*$env:LOCALAPPDATA\MEGAcmd*") {
+if ($registryValue -and $registryValue.Path -like "*$env:LOCALAPPDATA\CryptoGen") {
     Write-Host "[CG] Path already present in registry"
-} else {
+}
+else {
     # Add the desired path to the existing PATH value
-    $newPath = $env:LOCALAPPDATA + "\MEGAcmd"
-    if ($registryValue -eq $null) {
+    $newPath = $env:LOCALAPPDATA + "\CryptoGen"
+    if ($null -eq $registryValue) {
         # If the PATH value doesn't exist, create a new one
         New-ItemProperty -Path $registryPath -Name "Path" -Value $newPath -PropertyType "ExpandString" -Force
-    } else {
+    }
+    else {
         # If the PATH value exists, append the new path to it
         $newValue = $registryValue.Path + ";" + $newPath
         Set-ItemProperty -Path $registryPath -Name "Path" -Value $newValue
@@ -93,26 +99,30 @@ if ($registryValue -and $registryValue.Path -like "*$env:LOCALAPPDATA\MEGAcmd*")
     Write-Host "[CG] PATH variable reloaded."
 }
 
-if ($agentKIF -eq $true){
-# Remove all files from the source path
-Remove-Item $sourcePath\publish\*.* -Force -Recurse
-# Getting CryptoGen
-mega-get "https://mega.nz/folder/NZcgwbxK#UoFf5dW7umhk7eUEsqgOZw" "C:\tmp\CryptoGen" 
-
-# Loop through each file in the source path
-foreach ($file in Get-ChildItem -Path $sourcePath\publish -File) {
-    # Check if the file already exists in the destination path
-    $destinationFile = Join-Path -Path $destinationPath -ChildPath $file.Name
-    if (Test-Path $destinationFile -PathType Leaf) {
-        # If the file exists in the destination, copy it again
-        Copy-Item -Path $file.FullName -Destination $destinationPath -Force
-    } else {
-        # If the file doesn't exist in the destination, simply copy it
-        Copy-Item -Path $file.FullName -Destination $destinationPath
+if ($agentKIF -eq $true) {
+    # Remove all files from the source path
+    if (Test-Path $sourcePath\publish) {
+        Remove-Item $sourcePath\publish\*.* -Force -Recurse
     }
-    write-host "$file done"
-}
-# Remove all files from the source path
-Remove-Item $sourcePath\publish\*.* -Force -Recurse
-Write-Host "[CG] AgentKIFSetup done."
+    # Getting CryptoGen
+    mega-get "https://mega.nz/folder/NZcgwbxK#UoFf5dW7umhk7eUEsqgOZw" "C:\tmp\CryptoGen" 
+
+    # Loop through each file in the source path
+    foreach ($file in Get-ChildItem -Path $sourcePath\publish -File) {
+        # Check if the file already exists in the destination path
+        $destinationFile = Join-Path -Path $destinationPath -ChildPath $file.Name
+        if (Test-Path $destinationFile -PathType Leaf) {
+            # If the file exists in the destination, copy it again
+            Remove-Item -Path $destinationFile -Force
+            Copy-Item -Path $file.FullName -Destination $destinationPath -Force
+        }
+        else {
+            # If the file doesn't exist in the destination, simply copy it
+            Copy-Item -Path $file.FullName -Destination $destinationPath
+        }
+        write-host "$file done"
+    }
+    # Remove all files from the source path
+    Remove-Item $sourcePath\publish\*.* -Force -Recurse
+    Write-Host "[CG] AgentKIFSetup done."
 }
