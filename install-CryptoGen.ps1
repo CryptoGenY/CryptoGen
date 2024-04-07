@@ -62,7 +62,6 @@ if (-not (Test-Path -Path "$env:LOCALAPPDATA\CryptoGen" -PathType Container)) {
 }
 
 $regPath = "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\App Paths\MEGAcmdShell.exe"
-$defaultValue = Get-ItemPropertyValue -Path $regPath -Name "(Default)"
 if (Test-Path -Path $regPath) {
     Write-Host "[CG] MEGAcmd exists"
 }
