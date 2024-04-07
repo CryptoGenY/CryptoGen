@@ -73,17 +73,17 @@ else {
     Start-Process -FilePath "MEGAcmdSetup64.exe" -ArgumentList "/S" -Wait
 }
 
-# Specify the registry path
+# Specify the registry path (megacmd)
 $registryPath = "HKLM:\SYSTEM\CurrentControlSet\Control\Session Manager\Environment"
 $registryValue = Get-ItemProperty -Path $registryPath -Name "Path"
 
 # Check if the registry value contains the desired path
-if ($registryValue -and $registryValue.Path -like "*$env:LOCALAPPDATA\MEGAcmd*") {
+if ($registryValue -and $registryValue.Path -like "*$env:LOCALAPPDATA\CryptoGen") {
     Write-Host "[CG] Path already present in registry"
 }
 else {
     # Add the desired path to the existing PATH value
-    $newPath = $env:LOCALAPPDATA + "\MEGAcmd"
+    $newPath = $env:LOCALAPPDATA + "\CryptoGen"
     if ($null -eq $registryValue) {
         # If the PATH value doesn't exist, create a new one
         New-ItemProperty -Path $registryPath -Name "Path" -Value $newPath -PropertyType "ExpandString" -Force
