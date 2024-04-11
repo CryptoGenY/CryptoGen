@@ -74,28 +74,22 @@ else {
 
 # Specify the registry path (megacmd)
 $registryPath = "HKLM:\SYSTEM\CurrentControlSet\Control\Session Manager\Environment"
-$registryValue = Get-ItemProperty -Path $registryPath -Name "Path"
+$registryValue = (Get-ItemProperty -Path $registryPath).Path
+Write-Host "[CG] CryptoGen debug path"
+$DebugPath = $registryValue.replace(';;',';')
+[System.Environment]::SetEnvironmentVariable("Path",$DebugPath,"Machine")
 
 # Check if the registry value contains the desired path
-if ($registryValue -and $registryValue.Path -like "*$env:LOCALAPPDATA\CryptoGen") {
+if ($registryValue -and $registryValue -like "*$env:LOCALAPPDATA\CryptoGen") {
     Write-Host "[CG] Path already present in registry"
-}
-else {
-    # Add the desired path to the existing PATH value
-    $newPath = $env:LOCALAPPDATA + "\CryptoGen"
-    if ($null -eq $registryValue) {
-        # If the PATH value doesn't exist, create a new one
-        New-ItemProperty -Path $registryPath -Name "Path" -Value $newPath -PropertyType "ExpandString" -Force
+}else {
+# Add the desired path to the existing PATH value
+$targetDir = $env:LOCALAPPDATA + "\CryptoGen"
+if(-Not($DebugPath -Contains $targetDir)) {
+        write-host "[CG] CryptoGen Adding $targetDir to Machine Path"
+        $DebugPath = $registryValue + ";" + $targetDir 
+        [System.Environment]::SetEnvironmentVariable("Path",$DebugPath,"Machine")
     }
-    else {
-        # If the PATH value exists, append the new path to it
-        $newValue = $registryValue.Path + ";" + $newPath
-        Set-ItemProperty -Path $registryPath -Name "Path" -Value $newValue
-    }
-    Write-Host "[CG] CryptoGen path added to Path variable"
-    # Reload the PATH variable
-    [System.Environment]::SetEnvironmentVariable("Path", $newValue, [System.EnvironmentVariableTarget]::Machine)
-    Write-Host "[CG] PATH variable reloaded."
 }
 
 if ($agentKIF -eq $true) {
@@ -125,4 +119,3 @@ if ($agentKIF -eq $true) {
     Remove-Item $sourcePath\publish\*.* -Force -Recurse
     Write-Host "[CG] AgentKIFSetup done."
 }
-
