@@ -1,10 +1,10 @@
 # CryptoGen
 
-download the core setup program from powershell
+download the core setup program and run it from from powershell
 ```
-$urx = "https://github.com/CryptoGenY/CryptoGen/blob/main/install-CryptoGen.ps1"
-$psx = "install-CryptoGen.ps1"
-Invoke-WebRequest -Uri $urx -OutFile $psx
+
+.\install-CryptoGen.ps1
+
 ```
 CryptoGen includes tools that can be chosen from the core installer.
 
