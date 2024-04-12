@@ -116,6 +116,6 @@ if ($agentKIF -eq $true) {
         write-host "$file done"
     }
     # Remove all files from the source path
-    Remove-Item $sourcePath\publish\*.* -Force -Recurse
+    Remove-Item $sourcePath -Force -Recurse
     Write-Host "[CG] AgentKIFSetup done."
 }
